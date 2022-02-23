@@ -1,4 +1,4 @@
-import { client } from "./index.js";
+import { client } from "./indexOne.js";
 import bcrypt from "bcrypt";
 
 async function createClients(data) {

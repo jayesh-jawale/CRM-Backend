@@ -1,40 +1,41 @@
-// const express = require('express')   //commonjs
-// const {MongoClient} = require("mongodb")   //commonjs
+require("dotenv").config();
+const express = require("express");
+const app = express();
+const helmet = require("helmet");
+const morgan = require("morgan");
+const cors = require("cors");
+const bodyParser = require("body-parser");
+const mongoose = require('mongoose');
 
-import express from "express";  //type: "module"
-import {MongoClient} from "mongodb";  //type: "module"
-import dotenv from "dotenv";
+const userRouter = require('./src/routers/userRouter');
+const ticketRouter = require('./src/routers/ticketRouter');
 
-import { crmRouter } from "./crm.js";
+mongoose.connect(process.env.MONGO_URL);
+const connection = mongoose.connection;
 
-dotenv.config(); // getting all env keys
+// API  Security
+app.use(helmet());
 
-const app = express();    // Alternative to express  - hapi
+// Handle CORS error
+app.use(cors());
 
-//  app.use -> Intercept every request
- app.use(express.json()); // Every request in body is parsed as JSON
-//  express.json(); Inbuilt Middleware
+// Logger
+app.use(morgan("tiny"));
 
-// Create a connection
-// const MONGO_URL = "mongodb://localhost" //mongodb:localhost:27017
+// Set  body parser
+app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.json());
 
-const MONGO_URL = process.env.MONGO_URL;
-
-async function createConnection() {
-  const client = new MongoClient(MONGO_URL)
-  await client.connect(); //promise
-  console.log("Mongo DB Connected");
-  return client;
-}
-export const client = await createConnection();
-
-// const PORT = 9000
-const PORT = process.env.PORT;
-
+// Routers
 app.get('/', (req, res) => {
-  res.send("Hi there! My name is Jayesh");
-});
+    res.send("Hi there! My name is Jayesh");
+  });
 
-app.use("/crm", crmRouter);
+// User Routers
+app.use('/v1/user', userRouter);
 
-app.listen(PORT, () => console.log('Started'))
+// Ticket Router
+app.use('/v1/ticket', ticketRouter);
+  
+const port = process.env.PORT  || 3001
+app.listen(port, () => console.log('Started'))
