@@ -10,10 +10,9 @@ const insertUser = (userObject) => {
 }
 
 const userByEmail = (email) => {
-    if(!email)
-    return false;
-
     return new Promise((resolve, reject) => {
+        if(!email) return false;
+
         try {
             userSchema.findOne({email}, (error, data) => {
                 if(error) {

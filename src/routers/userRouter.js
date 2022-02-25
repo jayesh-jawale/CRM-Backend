@@ -33,7 +33,7 @@ router.post('/', async (req, res) => {
 
 // User Login
 // Get user by email from db
-router.post('/login', async(req, res) => {
+router.post("/login", async(req, res) => {
     const {email, password} = req.body
 
     if(!email || !password) {
@@ -46,7 +46,7 @@ router.post('/login', async(req, res) => {
     // Compare actual password and entered password
     const result = await comparePassword(password, storedPassword)
     if(result) {
-        const accessJWT = await createToken(user.email);
+        const accessJWT = await createToken(user.email, `${user._id}`);
         const refreshJWT = await createRefreshToken(user.email)
 
         res.json({message: 'Login Successfull', accessJWT, refreshJWT})

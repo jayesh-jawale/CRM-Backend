@@ -13,10 +13,10 @@ const comparePassword = (plainPassword, passwordFromDB) => {
             if(err)
             reject(err)
 
-            resolve(result)
+            resolve(result);
         });
-    })
-}
+    });
+};
 
 module.exports = {
     hashedPassword,
