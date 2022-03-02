@@ -26,7 +26,22 @@ const userByEmail = (email) => {
     });
 };
 
+const storeTokenInDB = (_id, token) => {
+    return new Promise((resolve, reject) => {
+        try {
+            userSchema.findOneAndUpdate({_id}, {
+                $set: {"refreshToken.token": token, "refreshToken.addedAt": Date.now()}
+            }
+        ).then((data) => resolve(data))
+        }
+        catch(error) {
+            reject(error)
+        }
+    })
+}
+
 module.exports = {
     insertUser,
     userByEmail,
+    storeTokenInDB,
 }

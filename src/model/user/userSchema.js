@@ -30,6 +30,18 @@ const userSchema = new Schema({
         minlength: 8,
         maxlength: 100,
         required: true,
+      },
+      refreshToken: {
+        token: {
+          type: String,
+          maxlength: 500,
+          default: "",
+        },
+      addedAt: {
+        type: Date,
+        required: true,
+        default: Date.now(),
+        }
       }
 })
 

@@ -46,8 +46,11 @@ router.post("/login", async(req, res) => {
     // Compare actual password and entered password
     const result = await comparePassword(password, storedPassword)
     if(result) {
+        // Create toen and store in Redis
         const accessJWT = await createToken(user.email, `${user._id}`);
-        const refreshJWT = await createRefreshToken(user.email)
+
+        // Create token and store in MongoDB
+        const refreshJWT = await createRefreshToken(user.email, `${user._id}`)
 
         res.json({message: 'Login Successfull', accessJWT, refreshJWT})
     } else {
