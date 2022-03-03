@@ -5,8 +5,8 @@ const {storeTokenInDB} = require('../model/user/userModel');
 const createToken = async (email, _id) => {
     try {
       // Token is generated
-      const accessJWT = await jwt.sign({ email }, process.env.MY_SECRET_KEY, {
-        expiresIn: "15m",
+      const accessJWT = await jwt.sign({ email }, process.env.MY_SECRET_KEY_ACCESS, {
+        expiresIn: "1m",
       });
   
       // Set created token above in Redis database
@@ -18,7 +18,7 @@ const createToken = async (email, _id) => {
   };
 
 const createRefreshToken = async (email, _id) => {
-        const refreshToken = jwt.sign({ email }, process.env.MY_SECRET_KEY, {
+        const refreshToken = jwt.sign({ email }, process.env.MY_SECRET_KEY_REFRESH, {
             expiresIn: '30d'
         });
        await storeTokenInDB(_id, refreshToken)

@@ -45,7 +45,17 @@ const setToken = async (key, value) => {
 //       })();
 // }
 
+const deleteToken = (key) => {
+  try {
+    client.del(key);
+  }
+  catch(error) {
+    console.log(error);
+  }
+}
+
 module.exports = {
     setToken,
     getToken,
+    deleteToken,
 }

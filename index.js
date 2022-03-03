@@ -9,6 +9,7 @@ const mongoose = require('mongoose');
 
 const userRouter = require('./src/routers/userRouter');
 const ticketRouter = require('./src/routers/ticketRouter');
+const tokensRouter = require('./src/routers/tokensRouter');
 
 mongoose.connect(process.env.MONGO_URL);
 const connection = mongoose.connection;
@@ -36,6 +37,9 @@ app.use('/v1/user', userRouter);
 
 // Ticket Router
 app.use('/v1/ticket', ticketRouter);
+
+// Tokens Router
+app.use('/v1/tokens', tokensRouter);
   
 const port = process.env.PORT  || 3001
 app.listen(port, () => console.log('Started'))
