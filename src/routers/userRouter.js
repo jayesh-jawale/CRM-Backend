@@ -1,15 +1,17 @@
 const express = require("express");
 const router = express.Router();
 
-const {insertUser, userByEmail} = require("../model/user/userModel");
+const {insertUser, userByEmail, getUserById} = require("../model/user/userModel");
 const {hashedPassword, comparePassword} = require("../helpers/bcrypt__helper");
 const {createToken, createRefreshToken} = require("../helpers/jwt_helper");
+const {authMiddleware} = require("../middlewares/auth_middleware");
 
 router.all('/', (req, res, next) => {
     // res.send("Message from user Router");
     next();
 })
 
+// Add User
 router.post('/', async (req, res) => {
     const { name, company, address, phone, email, password } = req.body;
     try {
@@ -57,5 +59,18 @@ router.post("/login", async(req, res) => {
         res.json({message: 'Invalid Credentials'})
     }
 })
+
+// Get User
+router.get("/", authMiddleware, async (req, res) => {
+    //this data coming form database
+    const _id = req.userId;
+  
+    const userProf = await getUserById(_id);
+    //3. extract user id(which is "value" in redis db)
+    //4. get user profile based on the user id
+  
+    res.json({ user: userProf });
+
+  });
 
 module.exports =  router;
