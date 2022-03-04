@@ -5,6 +5,7 @@ const {insertUser, userByEmail, getUserById} = require("../model/user/userModel"
 const {hashedPassword, comparePassword} = require("../helpers/bcrypt__helper");
 const {createToken, createRefreshToken} = require("../helpers/jwt_helper");
 const {authMiddleware} = require("../middlewares/auth_middleware");
+const {setPasswordResetPin} = require('../model/resetPin/resetPinModel');
 
 router.all('/', (req, res, next) => {
     // res.send("Message from user Router");
@@ -70,7 +71,25 @@ router.get("/", authMiddleware, async (req, res) => {
     //4. get user profile based on the user id
   
     res.json({ user: userProf });
-
   });
+
+// Create and send password reset pin number
+router.post("/reset-password", async (req, res) => {
+    const {email} = req.body;
+    const user = await userByEmail(email)
+
+    if(user && user._id) {
+    // create unique 6 digit pin
+    const setPin = await setPasswordResetPin(email);
+
+    return res.send(setPin)
+    }
+
+    res.json({
+        status: "error",
+        message:
+          "If the email is exist in our database, the password reset pin will be sent shortly.",
+      });
+})
 
 module.exports =  router;
