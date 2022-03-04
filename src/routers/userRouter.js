@@ -6,6 +6,7 @@ const {hashedPassword, comparePassword} = require("../helpers/bcrypt__helper");
 const {createToken, createRefreshToken} = require("../helpers/jwt_helper");
 const {authMiddleware} = require("../middlewares/auth_middleware");
 const {setPasswordResetPin} = require('../model/resetPin/resetPinModel');
+const { sendEmail } = require("../helpers/email_helpers");
 
 router.all('/', (req, res, next) => {
     // res.send("Message from user Router");
@@ -82,13 +83,26 @@ router.post("/reset-password", async (req, res) => {
     // create unique 6 digit pin
     const setPin = await setPasswordResetPin(email);
 
-    return res.send(setPin)
+    const sendEmailPin = await sendEmail(email, setPin.pin)
+
+    if(sendEmailPin && sendEmailPin.messageId) {
+        return res.json({
+            status: "success",
+            message:
+              "If the email is exist in our database, the password reset pin will be sent shortly.",
+          });
+    }
+    return res.json({
+        status: "success",
+        message:
+        "If the email is exist in our database, the password reset pin will be sent shortly."
+      });
     }
 
     res.json({
         status: "error",
         message:
-          "If the email is exist in our database, the password reset pin will be sent shortly.",
+          "Unable to process your request at the moment . Plz try again later!",
       });
 })
 
