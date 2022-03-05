@@ -58,9 +58,24 @@ const storeTokenInDB = (_id, token) => {
     })
 }
 
+const updatedPassword = (email, newPassword) => {
+    return new Promise((resolve, reject) => {
+        try {
+            userSchema.findOneAndUpdate({email}, {
+                $set: {password: newPassword}
+            }
+        ).then((data) => resolve(data))
+        }
+        catch(error) {
+            reject(error)
+        }
+    })
+}
+
 module.exports = {
     insertUser,
     userByEmail,
     storeTokenInDB,
     getUserById,
+    updatedPassword,
 }

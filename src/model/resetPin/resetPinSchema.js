@@ -12,6 +12,11 @@ const resetPinSchema = new Schema({
       maxlength: 50,
       required: true,
     },
+    addedAt: {
+      type: Date,
+      required: true,
+      default: Date.now(),
+    }
 })
 
 // We canot directly export userSchema here, we can usie it by creating a model out of here

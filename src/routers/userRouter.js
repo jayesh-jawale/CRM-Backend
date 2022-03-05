@@ -1,11 +1,11 @@
 const express = require("express");
 const router = express.Router();
 
-const {insertUser, userByEmail, getUserById} = require("../model/user/userModel");
+const {insertUser, userByEmail, getUserById, updatedPassword} = require("../model/user/userModel");
 const {hashedPassword, comparePassword} = require("../helpers/bcrypt__helper");
 const {createToken, createRefreshToken} = require("../helpers/jwt_helper");
 const {authMiddleware} = require("../middlewares/auth_middleware");
-const {setPasswordResetPin} = require('../model/resetPin/resetPinModel');
+const {setPasswordResetPin, getPinByEmail, deletePin} = require('../model/resetPin/resetPinModel');
 const { sendEmail } = require("../helpers/email_helpers");
 
 router.all('/', (req, res, next) => {
@@ -83,27 +83,49 @@ router.post("/reset-password", async (req, res) => {
     // create unique 6 digit pin
     const setPin = await setPasswordResetPin(email);
 
-    const sendEmailPin = await sendEmail(email, setPin.pin)
+    await sendEmail({email, pin: setPin.pin, type: "request-new-password"})
 
-    if(sendEmailPin && sendEmailPin.messageId) {
         return res.json({
             status: "success",
             message:
               "If the email is exist in our database, the password reset pin will be sent shortly.",
           });
     }
-    return res.json({
-        status: "success",
-        message:
-        "If the email is exist in our database, the password reset pin will be sent shortly."
-      });
-    }
 
     res.json({
         status: "error",
         message:
-          "Unable to process your request at the moment . Plz try again later!",
+        "If the email is exist in our database, the password reset pin will be sent shortly.",
       });
+})
+
+router.patch("/reset-password", async (req, res) => {
+    const {email, pin, newPassword} = req.body;
+    const getPin = await getPinByEmail(email, pin)
+    console.log(getPin)
+
+    if(getPin._id) {
+        const dbdDate = getPin.addedAt;
+        const days = 1;
+
+        let expireDate = dbdDate.setDate(dbdDate.getDate() + days)
+        const todaysDate = Date.now();
+        if(todaysDate > expireDate) {
+            return res.json({status: "error", message: "Pin is expired" })
+        }
+
+        const hashPassword = await hashedPassword(newPassword);
+        const result = await updatedPassword(email, hashPassword);
+
+        if(result._id) {
+            // Send email notification (password has been updated)
+            await sendEmail({email, type: "update-new-password"})
+            await deletePin(email, pin);
+
+            return res.json({status: "success", message: "Password is updated" })
+        }
+    }
+    res.json({status: "error", message: "Unable to update password"})
 })
 
 module.exports =  router;
