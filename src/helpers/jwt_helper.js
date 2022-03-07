@@ -6,7 +6,7 @@ const createToken = async (email, _id) => {
     try {
       // Token is generated
       const accessJWT = await jwt.sign({ email }, process.env.MY_SECRET_KEY_ACCESS, {
-        expiresIn: "1m",
+        expiresIn: "15m",
       });
   
       // Set created token above in Redis database

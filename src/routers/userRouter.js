@@ -1,13 +1,14 @@
 const express = require("express");
 const router = express.Router();
 
-const {insertUser, userByEmail, getUserById, updatedPassword} = require("../model/user/userModel");
+const {insertUser, userByEmail, getUserById, updatedPassword, storeTokenInDB} = require("../model/user/userModel");
 const {hashedPassword, comparePassword} = require("../helpers/bcrypt__helper");
 const {createToken, createRefreshToken} = require("../helpers/jwt_helper");
 const {authMiddleware} = require("../middlewares/auth_middleware");
 const {setPasswordResetPin, getPinByEmail, deletePin} = require('../model/resetPin/resetPinModel');
 const { sendEmail } = require("../helpers/email_helpers");
 const { resetPasswordValidation, udatePasswordValidation } = require("../middlewares/formValidation_middlewware");
+const{deleteToken} = require("../helpers/redis_helpers");
 
 router.all('/', (req, res, next) => {
     // res.send("Message from user Router");
@@ -127,6 +128,23 @@ router.patch("/reset-password", udatePasswordValidation, async (req, res) => {
         }
     }
     res.json({status: "error", message: "Unable to update password"})
+})
+
+router.delete("/logout", authMiddleware, async (req, res) => {
+    const token = req.header("x-auth-token");
+    const _id = req.userId;
+
+    // Delete token from Redis DB
+    deleteToken(token);
+
+    //delete token from Mongo DB
+    const result = await storeTokenInDB(_id, "")
+
+    if(result._id) {
+       return res.json({ status : "success", message: "Logged out successfully"})
+    }
+
+        res.json({ status : "error", message: "Unable to Logout"})
 })
 
 module.exports =  router;
