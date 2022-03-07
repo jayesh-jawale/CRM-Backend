@@ -7,6 +7,7 @@ const {createToken, createRefreshToken} = require("../helpers/jwt_helper");
 const {authMiddleware} = require("../middlewares/auth_middleware");
 const {setPasswordResetPin, getPinByEmail, deletePin} = require('../model/resetPin/resetPinModel');
 const { sendEmail } = require("../helpers/email_helpers");
+const { resetPasswordValidation, udatePasswordValidation } = require("../middlewares/formValidation_middlewware");
 
 router.all('/', (req, res, next) => {
     // res.send("Message from user Router");
@@ -75,7 +76,7 @@ router.get("/", authMiddleware, async (req, res) => {
   });
 
 // Create and send password reset pin number
-router.post("/reset-password", async (req, res) => {
+router.post("/reset-password", resetPasswordValidation, async (req, res) => {
     const {email} = req.body;
     const user = await userByEmail(email)
 
@@ -99,7 +100,7 @@ router.post("/reset-password", async (req, res) => {
       });
 })
 
-router.patch("/reset-password", async (req, res) => {
+router.patch("/reset-password", udatePasswordValidation, async (req, res) => {
     const {email, pin, newPassword} = req.body;
     const getPin = await getPinByEmail(email, pin)
     console.log(getPin)
