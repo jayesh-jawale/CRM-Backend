@@ -15,6 +15,22 @@ const insertTicket = (ticketData) => {
     })
 }
 
+const getTicket = (userId) => {
+    return new Promise((resolve, reject) => {
+        try   {
+            ticketSchema
+            .find({userId})
+            .then((data) => {
+                resolve(data)
+            })
+        }
+        catch (error) {
+            reject(error)
+        }
+    })
+}
+
 module.exports = {
     insertTicket,
+    getTicket,
 }
