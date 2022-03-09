@@ -45,8 +45,49 @@ const getTicketById = (_id, userId) => {
     })
 }
 
+const updateTicketById = ({_id, sender, message}) => {
+    return new Promise((resolve, reject) => {
+        try   {
+            ticketSchema
+            .findOneAndUpdate(
+                {_id},
+                {$push: {
+                    conversations: {sender, message}
+                }
+            }   
+        )
+            .then((data) => {
+                resolve(data)
+            })
+        }
+        catch (error) {
+            reject(error)
+        }
+    })
+}
+
+const closeTicketById = ({_id, userId}) => {
+    return new Promise((resolve, reject) => {
+        try   {
+            ticketSchema
+            .findOneAndUpdate(
+                {_id, userId},
+                {status: "Closed"}
+                )
+            .then((data) => {
+                resolve(data)
+            })
+        }
+        catch (error) {
+            reject(error)
+        }
+    })
+}
+
 module.exports = {
     insertTicket,
     getTicket,
     getTicketById,
+    updateTicketById,
+    closeTicketById,
 }
