@@ -84,10 +84,26 @@ const closeTicketById = ({_id, userId}) => {
     })
 }
 
+const deleteTicket = ({_id, userId}) => {
+    return new Promise((resolve, reject) => {
+        try   {
+            ticketSchema
+            .findOneAndDelete({_id, userId})
+            .then((data) => {
+                resolve(data)
+            })
+        }
+        catch (error) {
+            reject(error)
+        }
+    })
+}
+
 module.exports = {
     insertTicket,
     getTicket,
     getTicketById,
     updateTicketById,
     closeTicketById,
+    deleteTicket,
 }

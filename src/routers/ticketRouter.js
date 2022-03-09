@@ -6,7 +6,8 @@ const {
      getTicket,
      getTicketById,
      updateTicketById,
-     closeTicketById
+     closeTicketById,
+     deleteTicket,
     } = require("../model/ticket/ticketModel")
 const {authMiddleware} = require("../middlewares/auth_middleware")
 
@@ -123,6 +124,19 @@ router.patch('/close_ticket/:_id', authMiddleware, async (req, res) => {
         status: "error",
         message: "Cannot close ticket",
       });
+})
+
+// Delete the ticket
+router.delete('/:_id', authMiddleware, async (req, res) => {
+    const {_id} = req.params;
+    const userId = req.userId;
+
+    await deleteTicket({_id, userId})
+
+     res.json({
+          status: "success",
+          message: "ticket is deleted",
+        });
 })
 
 module.exports =  router;
