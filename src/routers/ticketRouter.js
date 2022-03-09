@@ -60,11 +60,11 @@ router.get('/', authMiddleware, async (req, res) => {
 })
 
 // Get ticket by Id
-router.get('/:tId', authMiddleware, async (req, res) => {
-    const {tId} = req.params;
+router.get('/:_id', authMiddleware, async (req, res) => {
+    const {_id} = req.params;
     const userId = req.userId;
 
-    const data = await getTicketById(tId, userId)
+    const data = await getTicketById(_id, userId)
 
     if (data) {
         return res.json({

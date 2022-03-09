@@ -30,11 +30,11 @@ const getTicket = (userId) => {
     })
 }
 
-const getTicketById = (tId, userId) => {
+const getTicketById = (_id, userId) => {
     return new Promise((resolve, reject) => {
         try   {
             ticketSchema
-            .find({tId, userId})
+            .find({_id, userId})
             .then((data) => {
                 resolve(data)
             })
