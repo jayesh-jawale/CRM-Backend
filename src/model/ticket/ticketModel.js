@@ -30,7 +30,23 @@ const getTicket = (userId) => {
     })
 }
 
+const getTicketById = (tId, userId) => {
+    return new Promise((resolve, reject) => {
+        try   {
+            ticketSchema
+            .find({tId, userId})
+            .then((data) => {
+                resolve(data)
+            })
+        }
+        catch (error) {
+            reject(error)
+        }
+    })
+}
+
 module.exports = {
     insertTicket,
     getTicket,
+    getTicketById,
 }

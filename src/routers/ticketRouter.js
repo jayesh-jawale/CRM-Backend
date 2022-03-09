@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 
-const {insertTicket, getTicket} = require("../model/ticket/ticketModel")
+const {insertTicket, getTicket, getTicketById} = require("../model/ticket/ticketModel")
 const {authMiddleware} = require("../middlewares/auth_middleware")
 
 router.all('/', (req, res, next) => {
@@ -40,7 +40,7 @@ router.post('/', authMiddleware, async (req, res) => {
       });
 })
 
-// Get ticket by id
+// Get all tickets
 router.get('/', authMiddleware, async (req, res) => {
     const userId = req.userId;
 
@@ -59,5 +59,24 @@ router.get('/', authMiddleware, async (req, res) => {
       });
 })
 
+// Get ticket by Id
+router.get('/:tId', authMiddleware, async (req, res) => {
+    const {tId} = req.params;
+    const userId = req.userId;
+
+    const data = await getTicketById(tId, userId)
+
+    if (data) {
+        return res.json({
+          status: "success",
+          data,
+        });
+      }
+  
+      res.json({
+        status: "error",
+        message: "Cannot get tickts",
+      });
+})
 
 module.exports =  router;
