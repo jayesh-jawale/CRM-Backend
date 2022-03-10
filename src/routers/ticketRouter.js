@@ -9,7 +9,9 @@ const {
      closeTicketById,
      deleteTicket,
     } = require("../model/ticket/ticketModel")
+
 const {authMiddleware} = require("../middlewares/auth_middleware")
+const {createTicketValidation, updateTicketValidation} = require("../middlewares/formValidation_middlewware");
 
 router.all('/', (req, res, next) => {
     // res.send("Message from ticket Router");
@@ -17,7 +19,7 @@ router.all('/', (req, res, next) => {
 })
 
 // Create ticket
-router.post('/', authMiddleware, async (req, res) => {
+router.post('/', createTicketValidation, authMiddleware, async (req, res) => {
     const {subject, sender, message} = req.body;
     const userId = req.userId;
 
@@ -87,7 +89,7 @@ router.get('/:_id', authMiddleware, async (req, res) => {
 })
 
 // Update ticket by Id
-router.put('/:_id', authMiddleware, async (req, res) => {
+router.put('/:_id', updateTicketValidation, authMiddleware, async (req, res) => {
     const {_id} = req.params;
     const {sender, message} = req.body;
 
