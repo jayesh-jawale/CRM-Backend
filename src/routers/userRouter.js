@@ -46,7 +46,7 @@ router.post("/login", async(req, res) => {
        return res.json({message: 'Invalid from submission'})
     }
 
-    const user = await userByEmail(email);  
+    const user = await userByEmail(email);
     const storedPassword = user.password;
 
     // Compare actual password and entered password
@@ -58,9 +58,9 @@ router.post("/login", async(req, res) => {
         // Create token and store in MongoDB
         const refreshJWT = await createRefreshToken(user.email, `${user._id}`)
 
-        res.json({message: 'Login Successfull', accessJWT, refreshJWT})
+        res.json({status: "success",message: 'Login Successfull', accessJWT, refreshJWT})
     } else {
-        res.json({message: 'Invalid Credentials'})
+        res.json({status: "error", message: 'Invalid Credentials'})
     }
 })
 

@@ -16,6 +16,8 @@ const sender = Joi.string().min(2).max(50).required();
 
 const message = Joi.string().min(2).max(500).required();
 
+const issueDate = Joi.date().required();
+
 
 //-------------------------------------------------------------------------------------------------------
 const resetPasswordValidation = (req, res, next) => {
@@ -39,7 +41,7 @@ const udatePasswordValidation = (req, res, next) => {
 }
 
 const createTicketValidation = (req, res, next) => {
-    const schema = Joi.object({subject, sender, message});
+    const schema = Joi.object({subject, sender, issueDate, message});
     const data = schema.validate(req.body);
 
     if(data.error) {

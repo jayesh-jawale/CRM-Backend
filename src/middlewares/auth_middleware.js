@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 
 const authMiddleware = async (req, res, next) => {
     try {
-        const token = req.header("x-auth-token");
+        const token = req.header("Authorization");
         const verifyToken = jwt.verify(token, process.env.MY_SECRET_KEY_ACCESS);
       
         // We have passed "email" as parameter to create token, so we are using "email"
