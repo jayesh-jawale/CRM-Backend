@@ -7,7 +7,7 @@ const {createToken, createRefreshToken} = require("../helpers/jwt_helper");
 const {authMiddleware} = require("../middlewares/auth_middleware");
 const {setPasswordResetPin, getPinByEmail, deletePin} = require('../model/resetPin/resetPinModel');
 const { sendEmail } = require("../helpers/email_helpers");
-const { resetPasswordValidation, udatePasswordValidation } = require("../middlewares/formValidation_middlewware");
+const { resetPasswordValidation, udatePasswordValidation, newUserValidation } = require("../middlewares/formValidation_middlewware");
 const{deleteToken} = require("../helpers/redis_helpers");
 
 router.all('/', (req, res, next) => {
@@ -16,7 +16,7 @@ router.all('/', (req, res, next) => {
 })
 
 // Add User
-router.post('/', async (req, res) => {
+router.post('/', newUserValidation, async (req, res) => {
     const { name, company, address, phone, email, password } = req.body;
     try {
         const hashPassword = await hashedPassword(password)
