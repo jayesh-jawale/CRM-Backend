@@ -30,10 +30,14 @@ router.post('/', async (req, res) => {
         }
 
         const result = await insertUser(bodyData);
-        res.json({message: "user created", result})
+        res.json({status: "success", message: "user created", result})
         }
     catch(error) {
-        res.json({status: "error", message: error.message})
+        let message = 'Unable to create user'
+        if(error.message.includes('duplicate key error collection')) {
+            message = 'this email already has account'
+        }
+        res.json({status: "error", message})
     }
 })
 
